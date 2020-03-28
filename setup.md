@@ -34,6 +34,21 @@ sudo cp /etc/php/7.3/apache2/php.ini /etc/php/7.3/apache2/php.ini.bak
 change the memory to 512
 sudo systemctl restart apache2
 
+## Setup self signed SSL
+https://pimylifeup.com/raspberry-pi-nextcloud-server/
+
+sudo mkdir -p /etc/apache2/ssl
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+sudo a2enmod ssl
+sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf.bak
+sudo vi /etc/apache2/sites-available/default-ssl.conf
+
+SSLCertificateFile /etc/apache2/ssl/apache.crt
+SSLCertificateKeyFile /etc/apache2/ssl/apache.key
+
+sudo a2ensite default-ssl.conf
+sudo service apache2 restart
+
 # External drive
 ## Format
 https://tecadmin.net/format-usb-in-linux/
