@@ -1,14 +1,15 @@
-# install Raspian via Raspberr PI Imager
+# Setup Raspian
+## Rasberry Imager
 https://www.raspberrypi.org/downloads/
 
-# add an empty file names ssh at in boot
+## Add an empty file names ssh at in boot for enable it
 touch /Volumes/boot/ssh
 
-# update - upgrade
+## update - upgrade
 sudo apt-get update
 sudo apt-get dist-upgrade
 
-# set static ip
+## Set static ip
 https://pimylifeup.com/raspberry-pi-static-ip-address/
 
 sudo vi /etc/resolv.conf
@@ -48,6 +49,14 @@ SSLCertificateKeyFile /etc/apache2/ssl/apache.key
 
 sudo a2ensite default-ssl.conf
 sudo service apache2 restart
+
+## Fix permission error
+https://help.nextcloud.com/t/nextcloud-warnung-some-app-directories-are-owned-by-a-different-user-than-the-web-server-one/65590/3
+
+sudo chown -R www-data:www-data /var/www/html/nextcloud
+
+## Update to 18.0.3
+Simply go to settings
 
 # External drive
 ## Format
