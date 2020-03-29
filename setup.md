@@ -29,6 +29,13 @@ static routers=<ROUTERIP>
 static domain_name_servers=<DNSIP>
 ```
 
+## Check temperature
+https://medium.com/@kevalpatel2106/monitor-the-core-temperature-of-your-raspberry-pi-3ddfdf82989f
+
+```bash
+/opt/vc/bin/vcgencmd measure_temp
+```
+
 # Ansible
 http://unixetc.co.uk/2017/11/25/automatic-nextcloud-installation-on-raspberry-pi/
 
@@ -107,7 +114,7 @@ sudo mount /dev/sda1 /media/ncdata -o uid=pi,gid=pi
 umount /media/ncdata
 ```
 
-## Mount ext4 drive with osx
+### Mount ext4 drive with osx
 https://github.com/gerard/ext4fuse
 
 ### Install Fuse
