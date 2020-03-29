@@ -126,7 +126,8 @@ diskutil list
 sudo ext4fuse /dev/disk$DISKs$SECTION /$MOUNT_POINT -o allow_other
 # ie sudo ext4fuse /dev/disk0s5 ~tmp/my-linux-mount -o allow_other
 
-sudo umount /$MOUNT_POINT
+diskutil umount /$MOUNT_POINT
+diskutil unmountDisk /dev/disk$DISKs$SECTION
 ```
 
 # Docker (WIP)
