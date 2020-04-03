@@ -36,6 +36,15 @@ https://medium.com/@kevalpatel2106/monitor-the-core-temperature-of-your-raspberr
 /opt/vc/bin/vcgencmd measure_temp
 ```
 
+## Control power led
+```bash
+sudo su
+# off
+echo none > /sys/class/leds/led1/trigger
+# on
+echo default-on > /sys/class/leds/led1/trigger
+```
+
 # Ansible
 http://unixetc.co.uk/2017/11/25/automatic-nextcloud-installation-on-raspberry-pi/
 
