@@ -29,6 +29,12 @@ static routers=<ROUTERIP>
 static domain_name_servers=<DNSIP>
 ```
 
+## Set hostname
+```bash
+sudo vi /etc/hostname
+sudo vi /etc/hosts
+```
+
 ## Check temperature
 https://medium.com/@kevalpatel2106/monitor-the-core-temperature-of-your-raspberry-pi-3ddfdf82989f
 
@@ -37,6 +43,8 @@ https://medium.com/@kevalpatel2106/monitor-the-core-temperature-of-your-raspberr
 ```
 
 ## Control power led
+https://community.home-assistant.io/t/anyone-know-how-to-turn-of-power-led-on-pi3b/75253
+
 ```bash
 sudo su
 # off
@@ -45,7 +53,51 @@ echo none > /sys/class/leds/led1/trigger
 echo default-on > /sys/class/leds/led1/trigger
 ```
 
-# Ansible
+# External drive
+## Format
+https://tecadmin.net/format-usb-in-linux/
+https://superuser.com/questions/662614/raspberry-pi-how-to-format-hdd
+
+```bash
+sudo mkfs.ext4 /dev/s$DISK
+ie sudo mkfs.ext4 /dev/sda1
+```
+
+## Mount
+https://www.raspberrypi-spy.co.uk/2014/05/how-to-mount-a-usb-flash-disk-on-the-raspberry-pi/
+
+```bash
+ls -l /dev/disk/by-uuid/
+sudo mkdir /media/ncdata
+sudo chown -R pi:pi /media/ncdata
+sudo mount /dev/sda1 /media/ncdata -o uid=pi,gid=pi
+umount /media/ncdata
+```
+
+### Mount ext4 drive with osx
+https://github.com/gerard/ext4fuse
+
+### Install Fuse
+```bash
+brew cask install osxfuse
+brew install ext4fuse
+```
+
+### List disks
+```bash
+diskutil list
+```
+
+### Mount
+```bash
+sudo ext4fuse /dev/disk$DISKs$SECTION /$MOUNT_POINT -o allow_other
+# ie sudo ext4fuse /dev/disk0s5 ~tmp/my-linux-mount -o allow_other
+
+diskutil umount /$MOUNT_POINT
+diskutil unmountDisk /dev/disk$DISKs$SECTION
+```
+
+# Nextcloud bare metal installation with Ansible
 http://unixetc.co.uk/2017/11/25/automatic-nextcloud-installation-on-raspberry-pi/
 
 ```bash
@@ -99,54 +151,12 @@ https://help.nextcloud.com/t/nextcloud-warnung-some-app-directories-are-owned-by
 sudo chown -R www-data:www-data /var/www/html/nextcloud
 ```
 
-## Update to 18.0.3
-Simply go to settings from within Nextcloud
+## Update to 18.0.4
+Simply upgrade via settings from within Nextcloud
 
-# External drive
-## Format
-https://tecadmin.net/format-usb-in-linux/
-https://superuser.com/questions/662614/raspberry-pi-how-to-format-hdd
-
-```bash
-sudo mkfs.ext4 /dev/s$DISK
-ie sudo mkfs.ext4 /dev/sda1
-```
-
-## Mount
-https://www.raspberrypi-spy.co.uk/2014/05/how-to-mount-a-usb-flash-disk-on-the-raspberry-pi/
-
-```bash
-ls -l /dev/disk/by-uuid/
-sudo mkdir /media/ncdata
-sudo chown -R pi:pi /media/ncdata
-sudo mount /dev/sda1 /media/ncdata -o uid=pi,gid=pi
-umount /media/ncdata
-```
-
-### Mount ext4 drive with osx
-https://github.com/gerard/ext4fuse
-
-### Install Fuse
-```bash
-brew cask install osxfuse
-brew install ext4fuse
-```
-
-### List disks
-```bash
-diskutil list
-```
-
-### Mount
-```bash
-sudo ext4fuse /dev/disk$DISKs$SECTION /$MOUNT_POINT -o allow_other
-# ie sudo ext4fuse /dev/disk0s5 ~tmp/my-linux-mount -o allow_other
-
-diskutil umount /$MOUNT_POINT
-diskutil unmountDisk /dev/disk$DISKs$SECTION
-```
-
-# Docker (WIP)
+# Nextcloud installation using Docker
+## Installation
+### Docker
 https://howchoo.com/g/nmrlzmq1ymn/how-to-install-docker-on-your-raspberry-pi
 
 ```bash
@@ -155,14 +165,45 @@ sudo usermod -aG docker pi
 groups pi
 sudo reboot
 ```
-
-## NextCloudPi
-https://docs.nextcloudpi.com/en/how-to-get-started-with-ncp-docker/
+### Docker compose
+https://dev.to/rohansawant/installing-docker-and-docker-compose-on-the-raspberry-pi-in-5-simple-steps-3mgl
 
 ```bash
-docker run -d -p 4443:4443 -p 443:443 -p 80:80 -v /media/ncdata:/data --name nextcloudpi ownyourbits/nextcloudpi-armhf 
-docker run -d -p 4443:4443 -p 443:443 -p 80:80 -v ncdata:/data -v /media/ncdata:/data/app/data  --name nextcloudpi ownyourbits/nextcloudpi-armhf 
+sudo apt-get install -y python3 python3-pip
+sudo pip3 install docker-compose
 ```
 
 ## Nextcloud
 https://hub.docker.com/_/nextcloud/
+
+```bash
+ssh pi@$server-name.local
+
+sudo apt install ansible python3-docker
+```
+
+### Run via docker-compose
+https://github.com/mtraina/docker-nextcloud
+
+# add permission to folder 
+docker exec -it docker-nextcloud_app_1 sh
+
+chown -R www-data:root ./data
+
+# add trusted domain from within the container
+https://docs.nextcloud.com/server/latest/admin_manual/installation/installation_wizard.html#trusted-domains
+
+mountpoint -q /mnt/foo && echo "mounted" || echo "not mounted"
+
+https://github.com/docker/awesome-compose/blob/master/nextcloud-redis-mariadb/docker-compose.yaml
+
+https://www.docker.com/blog/awesome-compose-app-samples-for-project-dev-kickoff/
+
+
+https://www.johnmackenzie.co.uk/post/creating-self-signed-ssl-certificates-for-docker-and-nginx/
+
+http://www.barbrothersgroningen.com/calisthenics-workout-plan/#2.
+
+https://www.rs-online.com/designspark/raspberry-pi-4-personal-datacentre-part-1-ansible-docker-and-nextcloud
+
+https://github.com/nextcloud/docker
